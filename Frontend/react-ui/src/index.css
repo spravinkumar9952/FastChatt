@@ -1,0 +1,10 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+.bg-grey-100{
+    background-color: #f5f5f5;
+}
+.bg-grey-900{
+    background-color: #212121;
+}
