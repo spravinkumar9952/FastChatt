@@ -1,0 +1,9 @@
+version: '3'
+
+services: 
+  react-ui:
+    build:
+      context: ./
+      dockerfile: react-ui/Dockerfile
+    ports:
+      - "3000:3000"
