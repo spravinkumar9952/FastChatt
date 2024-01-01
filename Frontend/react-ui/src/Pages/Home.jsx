@@ -1,24 +1,34 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Home () {
+export default function Home() {
 
     const navigator = useNavigate();
 
     useEffect(() => {
         const name = localStorage.getItem("USER_NAME");
-        if(name){
-            navigator("/chat");
+        if (name) {
+            console.log("name in Home ", name);
+            navigator("/chat", {
+                state : {
+                    userName: name
+                }
+            });
         }
-        
+
     }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
-        const userName =  e.target.userName.value;
+
+        const userName = e.target.userName.value;
         localStorage.setItem("USER_NAME", userName);
-        navigator("/chat", {userName : userName});
+        
+        navigator("/chat", { 
+            state : {
+                userName: userName 
+            }
+        });
     }
 
     return (
@@ -27,7 +37,7 @@ export default function Home () {
 
             <form action="" onSubmit={handleSubmit} className="flex flex-col items-center" autoComplete="off">
                 <label htmlFor="userName" className="font-bold">User Name</label>
-                <input type="text" name="userName" id="userName" className="border border-gray-600"/>
+                <input type="text" name="userName" id="userName" className="border border-gray-600" />
 
                 <button type="submit" className="bg-green-500 rounded px-4 py-2 mt-4">Enter</button>
             </form>

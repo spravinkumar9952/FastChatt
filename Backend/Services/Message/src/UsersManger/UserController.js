@@ -2,23 +2,25 @@
 export default class User {
     static users = new Map
 
-    addUser(id, name) {
-        users.set(id, {
-            name : name 
-        })        
+    static addUser(usnerName, socketID) {
+        User.users.set(usnerName, socketID);     
     }
 
-    removeUser(id) {
-        User.users.delete(id);
+    static removeUser(userName) {
+        User.users.delete(userName);
     }
 
-    isUserThere(id){
-        return User.users.has(id)
+    static findUserByUserName(userName){
+        return User.users.has(userName)
     }
 
-    printAvailableUsers(){
-        for(let [id , data] of User.users){
-            console.log(id , "=>", data);
+    static getSocketID(userName){
+        return User.users.get(userName);
+    }
+
+    static printAvailableUsers(){
+        for(let [userName, socketID] of User.users){
+            console.log(userName , "=>", socketID);
         }
     }
 }

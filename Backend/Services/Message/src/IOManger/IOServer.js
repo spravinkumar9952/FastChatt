@@ -22,9 +22,25 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
 
+    const userName = socket.handshake.auth.userName;
+    const socketID = socket.id;
+    console.log(userName + " Joined the chat");
+    console.log("His socket ID: ", socketID);
+
+    User.addUser(userName, socketID);
+
     socket.on("message", data =>{
-        socket.join(data.to);
-        io.to(data.to).emit("responseMessage", "Hello " + data.msg);
+        data.to = "pravin" // hard coded the value // replace it with original value by initializing one api call to get users in frontend 
+        if(!User.findUserByUserName(data.to)){
+            console.log(data.to + " not found!");
+            return ;
+        }
+
+        io.to(User.getSocketID(data.to)).emit("responseMessage", {
+            from : data.from,
+            to : data.to,
+            message : data.message
+        });
     });
     
 

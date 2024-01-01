@@ -3,7 +3,7 @@ import {
     RouterProvider,
   } from "react-router-dom";
 import Home from "./Pages/Home"
-import ChatBox from "./Components/ChatBox";
+import ChatBox from "./Pages/ChatBox";
 
 
 const router = createBrowserRouter([

@@ -1,25 +1,31 @@
 import { useState, useEffect } from "react"
 
 
-import MessageReceived from "./MessageRecieved"; 
-import MessageSent from "./MessageSent";
+import MessageReceived from "../Components/MessageRecieved"; 
+import MessageSent from "../Components/MessageSent";
 import { connectWithServer, socket} from "../Helpers/SocketHelper";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-export default function ChatBox({userName}){
+export default function ChatBox(){
+    const {state} = useLocation();
     const navigator = useNavigate();
     const [text, setText] = useState("");
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
-        connectWithServer(userName);
+        connectWithServer(state.userName);
     }, [])
+
+    // only for debugging purpose
+    useEffect(() => {
+        console.log(history);
+    }, [history]);
     
     useEffect(() => {
 
         socket.on("responseMessage", (data) => {
             console.log("response ---> ", data);
-            setHistory((old) => [...old, {author : "reciever", data : data}])
+            setHistory((old) => [...old, {from : data.userName, to : state.userName, message: data.message}])
         })
 
         return () => {
@@ -29,8 +35,9 @@ export default function ChatBox({userName}){
 
     const sendMsgHandler = (e) => {
         e.preventDefault();
-        setHistory((old) => [...old, {author : userName, data : text}])
-        socket.emit("message", {data : text, to : userName});
+        setHistory((old) => [...old, {from : state.userName, to : state.userName, message : text}])
+        socket.emit("message", {from : state.userName, to : state.userName, message : text});
+        setText("");
     }
 
     const logoutHandler = (e) => {
@@ -41,12 +48,13 @@ export default function ChatBox({userName}){
     return(
         <>
             <button onClick={logoutHandler} className="bg-red-500 p-4 m-4 rounded">LogOut</button>
+            <h1>Hello {state.userName}!</h1>
             <div className="w-1/1 h-2/3 m-16 bg-grey-100">
                {history && history.map((obj) => {
-                    if(obj.author === "sender"){
-                        return <MessageSent message={obj.data}/>
+                    if(obj.from === state.userName){
+                        return <MessageSent message={obj.message}/>
                     }else{
-                        return <MessageReceived message={obj.data}/>
+                        return <MessageReceived message={obj.message}/>
                     }
                 })}
             </div>
