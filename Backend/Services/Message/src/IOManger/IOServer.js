@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
     User.addUser(userName, socketID);
 
     socket.on("message", data =>{
-        data.to = "pravin" // hard coded the value // replace it with original value by initializing one api call to get users in frontend 
+        data.to = "pravin"
         if(!User.findUserByUserName(data.to)){
             console.log(data.to + " not found!");
             return ;
@@ -48,6 +48,8 @@ io.on('connection', (socket) => {
       console.log('A user disconnected');
     });
 });
+
+
 
 
 export default server
