@@ -11,9 +11,12 @@ export default function ChatBox(){
     const navigator = useNavigate();
     const [text, setText] = useState("");
     const [history, setHistory] = useState([]);
+    const [userName, setUserName] = useState("");
 
     useEffect(() => {
-        connectWithServer(state.userName);
+        const userName = localStorage.getItem("USER_NAME")
+        connectWithServer(userName);
+        setUserName(userName);
     }, [])
 
     // only for debugging purpose
@@ -25,7 +28,7 @@ export default function ChatBox(){
 
         socket.on("responseMessage", (data) => {
             console.log("response ---> ", data);
-            setHistory((old) => [...old, {from : data.userName, to : state.userName, message: data.message}])
+            setHistory((old) => [...old, {from : data.userName, to : userName, message: data.message}])
         })
 
         return () => {
@@ -35,13 +38,14 @@ export default function ChatBox(){
 
     const sendMsgHandler = (e) => {
         e.preventDefault();
-        setHistory((old) => [...old, {from : state.userName, to : state.userName, message : text}])
-        socket.emit("message", {from : state.userName, to : state.userName, message : text});
+        setHistory((old) => [...old, {from : state.targetUserName, to : userName, message : text}])
+        socket.emit("message", {from : state.targetUserName, to : state.userName, targetSocketID : state.targetSocketID, message : text});
         setText("");
     }
 
     const logoutHandler = (e) => {
         localStorage.removeItem("USER_NAME");
+        socket.disconnect(userName + " Logouted!");
         navigator('/');
     }
 
@@ -51,7 +55,7 @@ export default function ChatBox(){
             <h1>Hello {state.userName}!</h1>
             <div className="w-1/1 h-2/3 m-16 bg-grey-100">
                {history && history.map((obj) => {
-                    if(obj.from === state.userName){
+                    if(obj.from === userName){
                         return <MessageSent message={obj.message}/>
                     }else{
                         return <MessageReceived message={obj.message}/>

@@ -1,6 +1,7 @@
 import Express  from "express";
 import cors from "cors"
 import User from "../UsersManger/UserController.js";
+import {getUsers} from "../DBManager/Users.js"
 
 const app = Express();
 app.use(cors());
@@ -13,6 +14,15 @@ app.get("/", (req, res) => {
 app.post("/join", (req, res) => {
     User.addUser(req.id, req.name);
     res.status(200).send("USER_ADDED");
-})
+});
+
+app.get("/active/users", (req, res) => {
+    Promise.resolve(getUsers()).then((value) => {
+        let list = value.rows;
+        console.log("inside user",list);
+        res.status(200).send(list);
+    });
+});
+
 
 export default app;

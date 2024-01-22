@@ -9,13 +9,8 @@ export default function Home() {
         const name = localStorage.getItem("USER_NAME");
         if (name) {
             console.log("name in Home ", name);
-            navigator("/chat", {
-                state : {
-                    userName: name
-                }
-            });
+            navigator("usersList")
         }
-
     }, []);
 
     const handleSubmit = (e) => {
@@ -24,11 +19,7 @@ export default function Home() {
         const userName = e.target.userName.value;
         localStorage.setItem("USER_NAME", userName);
         
-        navigator("/chat", { 
-            state : {
-                userName: userName 
-            }
-        });
+        navigator("usersList")
     }
 
     return (

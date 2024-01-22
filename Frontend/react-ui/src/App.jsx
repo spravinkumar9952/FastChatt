@@ -4,6 +4,7 @@ import {
   } from "react-router-dom";
 import Home from "./Pages/Home"
 import ChatBox from "./Pages/ChatBox";
+import UserListView from "./Pages/UsersListView";
 
 
 const router = createBrowserRouter([
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
     {
         path : "/chat",
         element : <ChatBox/>
+    },
+    {
+        path : "/usersList",
+        element : <UserListView/>
     }
 ]);
 

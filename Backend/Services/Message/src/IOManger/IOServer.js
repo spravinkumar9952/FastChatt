@@ -4,6 +4,7 @@
 import {Server} from "socket.io"
 import http from "http"
 import app from "../AppManager/AppManagerServer.js"
+import { addUsers, getUsers , getUserSocketIDByUserName, deleteUserBySocketID} from "../DBManager/Users.js";
 
 const server = http.createServer(app);
 import User from "../UsersManger/UserController.js"
@@ -27,25 +28,34 @@ io.on('connection', (socket) => {
     console.log(userName + " Joined the chat");
     console.log("His socket ID: ", socketID);
 
-    User.addUser(userName, socketID);
+    addUsers(userName, socketID);
 
     socket.on("message", data =>{
-        data.to = "pravin"
-        if(!User.findUserByUserName(data.to)){
-            console.log(data.to + " not found!");
-            return ;
-        }
+        console.log("To", 
+        data.to)
+        const socketIDPromise = getUserSocketIDByUserName(data.to);
+        socketIDPromise.then((res) => {
+            if(res.rowCount <= 0){
+                console.log("User Not found");
+            }else{
+                const targetSocketID = res.rows[0];
+                console.log(targetSocketID, "dfadsfadsfa");
+                io.to(User.getSocketID(data.targetSocketID)).emit("responseMessage", {
+                    from : data.from,
+                    to : data.to,
+                    message : data.message
+                });
+            }
+        })
+        
+        console.log("socketIdPromise", socketID);
 
-        io.to(User.getSocketID(data.to)).emit("responseMessage", {
-            from : data.from,
-            to : data.to,
-            message : data.message
-        });
+        
     });
     
 
     socket.on('disconnect', () => {
-      console.log('A user disconnected');
+        deleteUserBySocketID(socket.id);
     });
 });
 
