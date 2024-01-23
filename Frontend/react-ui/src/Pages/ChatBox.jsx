@@ -15,7 +15,6 @@ export default function ChatBox(){
 
     useEffect(() => {
         const userName = localStorage.getItem("USER_NAME")
-        connectWithServer(userName);
         setUserName(userName);
     }, [])
 
@@ -32,14 +31,14 @@ export default function ChatBox(){
         })
 
         return () => {
-         // socket.disconnect(); 
+         socket.disconnect(); 
         };
     }, [socket]);
 
     const sendMsgHandler = (e) => {
         e.preventDefault();
         setHistory((old) => [...old, {from : state.targetUserName, to : userName, message : text}])
-        socket.emit("message", {from : state.targetUserName, to : state.userName, targetSocketID : state.targetSocketID, message : text});
+        socket.emit("message", {from :userName, to : state.targetUserName, targetSocketID : state.targetSocketID, message : text});
         setText("");
     }
 
@@ -52,7 +51,7 @@ export default function ChatBox(){
     return(
         <>
             <button onClick={logoutHandler} className="bg-red-500 p-4 m-4 rounded">LogOut</button>
-            <h1>Hello {state.userName}!</h1>
+            <h1>Message To {state.targetUserName}!</h1>
             <div className="w-1/1 h-2/3 m-16 bg-grey-100">
                {history && history.map((obj) => {
                     if(obj.from === userName){

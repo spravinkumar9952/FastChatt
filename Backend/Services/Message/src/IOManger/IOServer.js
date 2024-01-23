@@ -4,10 +4,9 @@
 import {Server} from "socket.io"
 import http from "http"
 import app from "../AppManager/AppManagerServer.js"
-import { addUsers, getUsers , getUserSocketIDByUserName, deleteUserBySocketID} from "../DBManager/Users.js";
+import { addUsers , getUserSocketIDByUserName, deleteUserByName} from "../DBManager/Users.js";
 
 const server = http.createServer(app);
-import User from "../UsersManger/UserController.js"
 
 const io = new Server(server, {
     cors: {
@@ -25,37 +24,32 @@ io.on('connection', (socket) => {
 
     const userName = socket.handshake.auth.userName;
     const socketID = socket.id;
-    console.log(userName + " Joined the chat");
-    console.log("His socket ID: ", socketID);
+    console.log(userName + " Joined the chat and His Socket id " + socketID);
 
     addUsers(userName, socketID);
 
     socket.on("message", data =>{
-        console.log("To", 
-        data.to)
         const socketIDPromise = getUserSocketIDByUserName(data.to);
         socketIDPromise.then((res) => {
             if(res.rowCount <= 0){
-                console.log("User Not found");
+                console.log(data.to + " Not found");
             }else{
-                const targetSocketID = res.rows[0];
-                console.log(targetSocketID, "dfadsfadsfa");
-                io.to(User.getSocketID(data.targetSocketID)).emit("responseMessage", {
+                const targetSocketID = res.rows[0].socket_id; 
+                console.log("Sent message from " + userName + " to " + data.to);
+                console.log("Sent message from " +  socketID + " to " + targetSocketID);
+                io.to(targetSocketID).emit("responseMessage", {
                     from : data.from,
                     to : data.to,
                     message : data.message
                 });
             }
         })
-        
-        console.log("socketIdPromise", socketID);
-
-        
     });
     
 
     socket.on('disconnect', () => {
-        deleteUserBySocketID(socket.id);
+        console.log("disconnect hitted");
+        deleteUserByName(socket.handshake.auth.userName);
     });
 });
 

@@ -16,6 +16,15 @@ const connectWithServer = (userName) => {
         console.log("Session ID => ", socketID);
         connectedUsers.set(userName, socketID);
     })
+
+    const handleTabClose = event => {
+        event.preventDefault();
+        socket.disconnect();
+        console.log("Socket Disconnect called in reload");
+        return (event.returnValue ='Are you sure you want to exit?');
+    };
+  
+      window.addEventListener('beforeunload', handleTabClose);
 }
 
 

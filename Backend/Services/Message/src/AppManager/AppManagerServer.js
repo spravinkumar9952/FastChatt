@@ -1,6 +1,5 @@
 import Express  from "express";
 import cors from "cors"
-import User from "../UsersManger/UserController.js";
 import {getUsers} from "../DBManager/Users.js"
 
 const app = Express();
@@ -12,7 +11,6 @@ app.get("/", (req, res) => {
 });
 
 app.post("/join", (req, res) => {
-    User.addUser(req.id, req.name);
     res.status(200).send("USER_ADDED");
 });
 
