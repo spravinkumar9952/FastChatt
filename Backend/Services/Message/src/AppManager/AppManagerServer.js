@@ -15,7 +15,7 @@ app.post("/join", (req, res) => {
 });
 
 app.get("/active/users", (req, res) => {
-    Promise.resolve(getUsers()).then((value) => {
+    Promise.resolve(getUsers("")).then((value) => {
         let list = value.rows;
         console.log("inside user",list);
         res.status(200).send(list);

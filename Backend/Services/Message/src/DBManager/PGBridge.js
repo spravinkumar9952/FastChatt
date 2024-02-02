@@ -3,8 +3,8 @@ const {Client} = pkg;
 
 const DBConnection = new Client(
     {
-        user : "postgres",
-        password : "root@123",
+        user : "spk",
+        password : "password@123",
         database : "FastChatt",
         port : 5432
     }
