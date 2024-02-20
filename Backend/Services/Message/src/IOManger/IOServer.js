@@ -29,6 +29,7 @@ io.on('connection', (socket) => {
     addUsers(userName, socketID);
 
     socket.on("message", data =>{
+        console.log(data);
         const socketIDPromise = getUserSocketIDByUserName(data.to);
         socketIDPromise.then((res) => {
             if(res.rowCount <= 0){
@@ -40,7 +41,9 @@ io.on('connection', (socket) => {
                 io.to(targetSocketID).emit("responseMessage", {
                     from : data.from,
                     to : data.to,
-                    message : data.message
+                    message : data.message,
+                    time : data.time,
+                    type : data.type
                 });
             }
         })
@@ -48,7 +51,7 @@ io.on('connection', (socket) => {
     
 
     socket.on('disconnect', () => {
-        console.log("disconnect hitted");
+        console.log("disconnect hitted by " + socket.handshake.auth.userName + " and his socket id " + socket.id);
         deleteUserByName(socket.handshake.auth.userName);
     });
 });
